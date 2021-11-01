@@ -218,14 +218,12 @@ class MainActivity : AppCompatActivity() {
                     Log.w("frameRateCounter", cnt.toString())
                     poseDetector.process(image)
                         .addOnSuccessListener { results ->
-                            lastResult = results
                             graphicOverlay.clear()
-
                             //check(results)
-                            newCheck()
                             if (this@MainActivity::lastResult.isInitialized) {
                                 checkDebounce(lastResult, results)
                             }
+                            lastResult = results
                             graphicOverlay.add(
                                 PoseGraphic(
                                     graphicOverlay,
@@ -247,16 +245,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun newCheck() {
-        if (run)
-            player_view.x += 1
-    }
+    fun checkDebounce(previous: Pose, current: Pose) {
+        var previousKneePositionX: Float = 0f
+        var currentKneePositionX: Float = 0f
+        var previousKneePositionY: Float = 0f
+        var currentKneePositionY: Float = 0f
+        previousKneePositionX =
+            previous.getPoseLandmark(PoseLandmark.LEFT_KNEE)?.position?.x ?: 0f
+        currentKneePositionX =
+            current.getPoseLandmark(PoseLandmark.LEFT_KNEE)?.position?.x ?: 0f
+        previousKneePositionY =
+            previous.getPoseLandmark(PoseLandmark.LEFT_KNEE)?.position?.y ?: 0f
+        currentKneePositionY =
+            current.getPoseLandmark(PoseLandmark.LEFT_KNEE)?.position?.y ?: 0f
+        val diffX = currentKneePositionX - previousKneePositionX
+        val diffY = currentKneePositionY - previousKneePositionY
+        //current_state.text = diff.toString()
+        // 1 step. Moving - Not Moving
+        if (diffY > ALLOWED_DEBOUNCE) {
+            current_state.text = "running"
+            run = true
+            player_view.x += SPEED
+        } else if (diffX < ALLOWED_DEBOUNCE && diffX > -ALLOWED_DEBOUNCE) {
+            run = false
+            current_state.text = "stay"
+        } else if (diffX > ALLOWED_DEBOUNCE || diffX < -ALLOWED_DEBOUNCE) {
+            current_state.text = "moving"
+        } /*else if (diff < 2f) {
+            current_state.text = "running"
+        }*/
 
-    fun checkDebounce(pre: Pose, current: Pose): Pose {
-        val leftShoulder = pre.getPoseLandmark(PoseLandmark.LEFT_KNEE)
-        val leftShoulder2 = current.getPoseLandmark(PoseLandmark.LEFT_KNEE)
-        leftShoulder?.position?.x = 0f
-        return current
+        //if (currentLeftShoulderPosition - previousLeftShoulderPosition < 2f && previousLeftShoulderPosition > 0 && currentLeftShoulderPosition>0) {
+        //    current.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)?.position?.x =
+        //        previousLeftShoulderPosition
+        //}
+        //Log.w("octupus", "prev" + previousKneePosition.toString())
+        //Log.w("octupus", "curr" + currentKneePosition.toString())
     }
 
 
@@ -265,6 +289,8 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         const val ANIMATE_COUNT = 4
+        const val ALLOWED_DEBOUNCE = 3f
+        const val SPEED = 2f
     }
 
     protected var animateCount = 0
