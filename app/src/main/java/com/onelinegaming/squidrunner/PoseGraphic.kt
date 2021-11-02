@@ -106,9 +106,9 @@ class PoseGraphic internal constructor(
         val faceTop = (faceBottom - (faceRight - faceLeft))
 
         face.setBounds(
-            faceLeft - 50.px,
-            faceTop - 100.px,
-            faceRight + 50.px,
+            faceLeft - 25.px,
+            faceTop - 50.px,
+            faceRight + 25.px,
             faceBottom
         )
         face.draw(canvas)
