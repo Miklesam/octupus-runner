@@ -1,0 +1,40 @@
+package com.onelinegaming.squidrunner
+
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+
+
+class GameOneViewModel : ViewModel() {
+
+    val disposables = CompositeDisposable()
+
+    val canRun: MutableLiveData<Boolean> = MutableLiveData(true)
+    val timeLeft: MutableLiveData<Int> = MutableLiveData(0)
+
+    init {
+        Observable.timer(5, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .repeat()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                canRun.value = canRun.value?.not()
+                Log.w("Squid", "timer")
+            }.addTo(disposables)
+
+        Observable.interval(1, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .repeat()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                timeLeft.value = it.toInt()
+            }.addTo(disposables)
+    }
+
+}
