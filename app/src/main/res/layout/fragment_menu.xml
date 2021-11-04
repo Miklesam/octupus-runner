@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:textSize="36sp"
+        android:textColor="@color/jacket_color"
+        android:text="Squid Runner AR"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/game_1_bttn"
         android:layout_width="wrap_content"

@@ -15,5 +15,34 @@
     <fragment
         android:id="@+id/gameOneFragment"
         android:name="com.onelinegaming.squidrunner.GameOneFragment"
-        android:label="GameOneFragment" />
+        android:label="GameOneFragment" >
+        <action
+            android:id="@+id/action_gameOneFragment_to_fragmentLose"
+            app:destination="@id/fragmentLose" />
+        <action
+            android:id="@+id/action_gameOneFragment_to_fragmentWin"
+            app:destination="@id/fragmentWin" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentLose"
+        android:name="com.onelinegaming.squidrunner.FragmentLose"
+        android:label="FragmentLose" >
+        <action
+            android:id="@+id/action_fragmentLose_to_menuFragment"
+            app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_fragmentLose_to_gameOneFragment"
+            app:destination="@id/gameOneFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentWin"
+        android:name="com.onelinegaming.squidrunner.FragmentWin"
+        android:label="FragmentWin" >
+        <action
+            android:id="@+id/action_fragmentWin_to_gameOneFragment"
+            app:destination="@id/gameOneFragment" />
+        <action
+            android:id="@+id/action_fragmentWin_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 </navigation>

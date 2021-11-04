@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="jacket_color">#FF037168</color>
+    <color name="color_run">#03C04A</color>
+    <color name="color_stay">#D21404</color>
+
 </resources>

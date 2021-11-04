@@ -1,17 +1,11 @@
 package com.onelinegaming.squidrunner
 
-import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Point
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.util.Size
-import android.view.Window
-import android.view.WindowManager
+import android.view.View
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -19,83 +13,119 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat.FontCallback.getHandler
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_game_one.*
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.media.MediaPlayer
+import android.view.animation.DecelerateInterpolator
 
-class MainActivity : AppCompatActivity() {
 
+class GameOneFragment : Fragment(R.layout.fragment_game_one) {
+
+    val gameOneViewModel: GameOneViewModel by viewModels()
     private var width = 0
     private var height = 0
     private lateinit var cameraExecutor: ExecutorService
     private var cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-    private var timer: Timer? = null
     private var run = true
     lateinit var lastResult: Pose
-
-    var currentXPos = 0
+    protected var animateCount = 0
+    protected var imCount = 0
+    private var movingAllowed = true
+    var mediaPlayer: MediaPlayer? = null
+    private var plaing = false
 
     private var cnt = 0
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-        setContentView(R.layout.activity_main)
-        val windowManager = windowManager
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val windowManager = requireActivity().windowManager
         val display = windowManager?.defaultDisplay
         val size = Point()
         display?.getSize(size)
         width = size.x
         height = size.y
-
-
         if (allPermissionsGranted()) {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this,
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
+                requireActivity(),
+                StartActivity.REQUIRED_PERMISSIONS,
+                StartActivity.REQUEST_CODE_PERMISSIONS
             )
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
-        if (timer == null)
-            timer = Timer()
-        timer?.schedule(object : TimerTask() {
-            override fun run() {
-                Handler(Looper.getMainLooper()).post(Runnable {
-                    if (run)
-                        updatePlayerImage()
-                })
+        gameOneViewModel.canRun.observe(viewLifecycleOwner) {
+            if (plaing) {
+                if (it) {
+                    movingAllowed = it
+                    playMusic()
+                    signal_to_run.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_run
+                        )
+                    )
+                } else {
+                    movingAllowed = false
+                    stopMusic()
+                    signal_to_run.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_stay
+                        )
+                    )
+                }
             }
-        }, 0, 20)
+        }
+        gameOneViewModel.timeLeft.observe(viewLifecycleOwner) {
+            if (it <= 60) {
+                if (it > 50)
+                    time_counter.text = "00:0${60 - it}"
+                else
+                    time_counter.text = "00:${60 - it}"
+            } else
+                initLose("Time is over")
+        }
 
-        object : CountDownTimer(60000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                time_counter.text = (millisUntilFinished / 1000).toString()
+        gameOneViewModel.gameStartLeft.observe(viewLifecycleOwner) {
+            if (it == 4) {
+                plaing = true
+                game_start.visibility = View.GONE
+            } else if (it in 1..3) {
+                animateCounText(4 - it)
             }
+        }
 
-            override fun onFinish() {
 
-            }
-        }.start()
+        gameOneViewModel.updateFrame.observe(viewLifecycleOwner) {
+            if (run && plaing)
+                updateRunningMan()
+        }
+
 
     }
 
-    private fun updatePlayerImage() {
-        increaseAttackCount()
+    private fun animateCounText(value: Int) {
+        game_start.text = value.toString()
+        game_start.apply {
+            this.visibility = View.VISIBLE
+            alpha = 0f
+            animate().alpha(1f).setDuration(500L).setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
+    private fun updateRunningMan() {
+        increaseRunCount()
         when (imCount) {
             0 -> {
                 player_view.setImageResource(R.drawable.first_scaled)
@@ -121,20 +151,17 @@ class MainActivity : AppCompatActivity() {
             7 -> {
                 player_view.setImageResource(R.drawable.eight_scaled)
             }
-            else -> {
-
-            }
         }
     }
 
-    protected fun increaseAttackCount() {
-        if (animateCount < ANIMATE_COUNT) {
+    protected fun increaseRunCount() {
+        if (animateCount < StartActivity.ANIMATE_COUNT) {
             animateCount++
         } else {
             animateCount = 0
         }
-        if (animateCount == ANIMATE_COUNT) {
-            if (imCount < 7) {
+        if (animateCount == StartActivity.ANIMATE_COUNT) {
+            if (imCount < 3) {
                 imCount++
             } else {
                 imCount = 0
@@ -142,14 +169,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener(Runnable {
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -182,10 +203,10 @@ class MainActivity : AppCompatActivity() {
                 )
 
             } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+                //Log.e(MainActivity.TAG, "Use case binding failed", exc)
             }
 
-        }, ContextCompat.getMainExecutor(this))
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     private inner class ImageAnalyzer(
@@ -232,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                         .addOnSuccessListener { results ->
                             graphicOverlay.clear()
                             //check(results)
-                            if (this@MainActivity::lastResult.isInitialized) {
+                            if (this@GameOneFragment::lastResult.isInitialized && plaing) {
                                 checkDebounce(lastResult, results)
                             }
                             lastResult = results
@@ -263,13 +284,19 @@ class MainActivity : AppCompatActivity() {
         val leftWrist = checkForPoseLandMark(PoseLandmark.LEFT_WRIST, previous, current)
         val rightWrist = checkForPoseLandMark(PoseLandmark.RIGHT_WRIST, previous, current)
         if (leftKnee || rightKnee || leftWrist || rightWrist) {
-            current_state.text = "Moving"
+            if (!movingAllowed)
+                initLose("Motion Detected")
         } else {
             run = false
-            current_state.text = "Stay"
         }
     }
 
+    override fun onDestroy() {
+        cameraExecutor.shutdown()
+        mediaPlayer = null
+        gameOneViewModel.disposables.dispose()
+        super.onDestroy()
+    }
 
     private fun checkForPoseLandMark(
         posePoint: Int,
@@ -288,28 +315,102 @@ class MainActivity : AppCompatActivity() {
 
         val diffX = currentX - previousX
         val diffY = currentY - previousY
-        return if (diffY > ALLOWED_DEBOUNCE) {
+        return if (diffY > StartActivity.ALLOWED_DEBOUNCE) {
             if (canRun) {
-                player_view.x += SPEED
+                player_view?.let {
+                    if (player_view.x + player_view.width / 2 > finish_line.x)
+                        initWin()
+                    it.x += StartActivity.SPEED
+                }
                 run = true
             }
             true
-        } else if (diffX < ALLOWED_DEBOUNCE && diffX > -ALLOWED_DEBOUNCE) {
+        } else if (diffX < StartActivity.ALLOWED_DEBOUNCE && diffX > -StartActivity.ALLOWED_DEBOUNCE) {
             false
-        } else diffX > ALLOWED_DEBOUNCE || diffX < -ALLOWED_DEBOUNCE
+        } else diffX > StartActivity.ALLOWED_DEBOUNCE || diffX < -StartActivity.ALLOWED_DEBOUNCE
     }
 
-
-    companion object {
-        private const val TAG = "CameraXBasic"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        const val ANIMATE_COUNT = 4
-        const val ALLOWED_DEBOUNCE = 4f
-        const val SPEED = 2f
+    private fun playMusic() {
+        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.squid_song);
+        mediaPlayer?.start()
     }
 
-    protected var animateCount = 0
-    protected var imCount = 0
+    private fun stopMusic() {
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.stop()
+            mediaPlayer?.reset()
+            mediaPlayer?.release()
+            mediaPlayer = null;
+        }
+    }
+
+    private fun allPermissionsGranted() = StartActivity.REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(
+            requireContext(), it
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun initLose(loseMessage: String) {
+        motion_detected.text = loseMessage
+        animateToLose()
+    }
+
+    private fun initWin() {
+        animateToWin()
+    }
+
+    private fun closeGame(win: Boolean) {
+        stopMusic()
+        if (win)
+            findNavController().navigate(R.id.action_gameOneFragment_to_fragmentWin)
+        else
+            findNavController().navigate(R.id.action_gameOneFragment_to_fragmentLose)
+
+    }
+
+    private fun animateToLose() {
+        gameOneViewModel.disposables.dispose()
+        cameraExecutor.shutdown()
+        aim_shot.apply {
+            this.visibility = View.VISIBLE
+            alpha = 0f
+            y = this@GameOneFragment.height.toFloat()
+            animate().alpha(1f).setDuration(1500L).setInterpolator(DecelerateInterpolator())
+                .withEndAction {
+                    closeGame(false)
+                }
+                .start()
+            animate().y((this@GameOneFragment.height / 3).toFloat()).setDuration(1500L)
+                .setInterpolator(DecelerateInterpolator())
+        }
+        motion_detected.apply {
+            this.visibility = View.VISIBLE
+            alpha = 0f
+            animate().alpha(1f).setDuration(1500L).setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
+    private fun animateToWin() {
+        gameOneViewModel.disposables.dispose()
+        cameraExecutor.shutdown()
+        pass_image.apply {
+            this.visibility = View.VISIBLE
+            alpha = 0f
+            y = this@GameOneFragment.height.toFloat()
+            animate().alpha(1f).setDuration(1500L).setInterpolator(DecelerateInterpolator())
+                .withEndAction {
+                    closeGame(true)
+                }
+                .start()
+            animate().y((this@GameOneFragment.height / 3).toFloat()).setDuration(1500L)
+                .setInterpolator(DecelerateInterpolator())
+        }
+        pass_text.apply {
+            this.visibility = View.VISIBLE
+            alpha = 0f
+            animate().alpha(1f).setDuration(1500L).setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
 
 }

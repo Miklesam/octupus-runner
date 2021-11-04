@@ -36,8 +36,11 @@ class StartActivity : AppCompatActivity() {
         const val REQUEST_CODE_PERMISSIONS = 10
         val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         val ANIMATE_COUNT = 4
-        val ALLOWED_DEBOUNCE = 4f
-        val SPEED = 2f
+        val ALLOWED_DEBOUNCE = 5f
+        val SPEED = 4f
     }
 
+    override fun onBackPressed() {
+
+    }
 }

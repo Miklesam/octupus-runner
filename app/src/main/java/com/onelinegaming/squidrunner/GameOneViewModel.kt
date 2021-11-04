@@ -17,8 +17,24 @@ class GameOneViewModel : ViewModel() {
 
     val canRun: MutableLiveData<Boolean> = MutableLiveData(true)
     val timeLeft: MutableLiveData<Int> = MutableLiveData(0)
+    val gameStartLeft: MutableLiveData<Int> = MutableLiveData(0)
+    val updateFrame: SingleLiveEvent<Any> = SingleLiveEvent()
 
     init {
+        Observable.interval(1, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .repeat()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                gameStartLeft.value = it.toInt()
+                if (it == 4L)
+                    startGame()
+            }.addTo(disposables)
+
+    }
+
+    private fun startGame() {
+        canRun.value = true
         Observable.timer(5, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.newThread())
             .repeat()
@@ -34,6 +50,14 @@ class GameOneViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 timeLeft.value = it.toInt()
+            }.addTo(disposables)
+
+        Observable.interval(20, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .repeat()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                updateFrame.value = null
             }.addTo(disposables)
     }
 
