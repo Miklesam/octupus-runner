@@ -1,4 +1,4 @@
-package com.onelinegaming.squidrunner
+package com.onelinegaming.squidrunner.fragments
 
 import android.content.pm.PackageManager
 import android.graphics.Point
@@ -28,6 +28,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import android.media.MediaPlayer
 import android.view.animation.DecelerateInterpolator
+import com.onelinegaming.squidrunner.*
+import com.onelinegaming.squidrunner.utils.GraphicOverlay
+import com.onelinegaming.squidrunner.utils.PoseGraphic
 
 
 class GameOneFragment : Fragment(R.layout.fragment_game_one) {
@@ -248,7 +251,6 @@ class GameOneFragment : Fragment(R.layout.fragment_game_one) {
                 // Pass image to an ML Kit Vision API
                 cnt += 1
                 if (true) {
-                    Log.w("frameRateCounter", cnt.toString())
                     poseDetector.process(image)
                         .addOnSuccessListener { results ->
                             graphicOverlay.clear()

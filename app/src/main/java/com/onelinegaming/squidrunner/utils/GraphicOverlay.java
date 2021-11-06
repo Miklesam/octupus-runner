@@ -1,4 +1,4 @@
-package com.onelinegaming.squidrunner;
+package com.onelinegaming.squidrunner.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -1,9 +1,10 @@
-package com.onelinegaming.squidrunner
+package com.onelinegaming.squidrunner.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.onelinegaming.squidrunner.R
 import kotlinx.android.synthetic.main.fragment_lose.*
 
 class FragmentLose : Fragment(R.layout.fragment_lose) {

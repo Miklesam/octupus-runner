@@ -1,10 +1,12 @@
-package com.onelinegaming.squidrunner
+package com.onelinegaming.squidrunner.utils
 
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import androidx.core.graphics.drawable.toBitmap
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
+import com.onelinegaming.squidrunner.App
+import com.onelinegaming.squidrunner.R
+import com.onelinegaming.squidrunner.px
 
 /** Draw the detected pose in preview.  */
 class PoseGraphic internal constructor(

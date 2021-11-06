@@ -1,4 +1,4 @@
-package com.onelinegaming.squidrunner
+package com.onelinegaming.squidrunner.fragments
 
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -7,6 +7,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.onelinegaming.squidrunner.R
+import com.onelinegaming.squidrunner.StartActivity
 import kotlinx.android.synthetic.main.fragment_menu.*
 
 class MenuFragment : Fragment(R.layout.fragment_menu) {

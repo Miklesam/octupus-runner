@@ -2,6 +2,7 @@ package com.onelinegaming.squidrunner
 
 import android.app.Application
 import android.content.Context
+import com.onelinegaming.squidrunner.utils.PrefsHelper
 
 
 class App : Application() {

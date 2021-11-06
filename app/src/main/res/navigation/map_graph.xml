@@ -6,7 +6,7 @@
     app:startDestination="@id/menuFragment">
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.onelinegaming.squidrunner.MenuFragment"
+        android:name="com.onelinegaming.squidrunner.fragments.MenuFragment"
         android:label="MenuFragment" >
         <action
             android:id="@+id/action_menuFragment_to_gameOneFragment"
@@ -14,7 +14,7 @@
     </fragment>
     <fragment
         android:id="@+id/gameOneFragment"
-        android:name="com.onelinegaming.squidrunner.GameOneFragment"
+        android:name="com.onelinegaming.squidrunner.fragments.GameOneFragment"
         android:label="GameOneFragment" >
         <action
             android:id="@+id/action_gameOneFragment_to_fragmentLose"
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentLose"
-        android:name="com.onelinegaming.squidrunner.FragmentLose"
+        android:name="com.onelinegaming.squidrunner.fragments.FragmentLose"
         android:label="FragmentLose" >
         <action
             android:id="@+id/action_fragmentLose_to_menuFragment"
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentWin"
-        android:name="com.onelinegaming.squidrunner.FragmentWin"
+        android:name="com.onelinegaming.squidrunner.fragments.FragmentWin"
         android:label="FragmentWin" >
         <action
             android:id="@+id/action_fragmentWin_to_gameOneFragment"

@@ -1,4 +1,4 @@
-package com.onelinegaming.squidrunner
+package com.onelinegaming.squidrunner.utils
 
 import android.util.Log
 import androidx.annotation.MainThread
