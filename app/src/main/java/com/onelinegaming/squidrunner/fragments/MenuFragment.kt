@@ -18,6 +18,9 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         game_1_bttn.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_gameOneFragment)
         }
+        about_bttn.setOnClickListener {
+            findNavController().navigate(R.id.action_menuFragment_to_fragmentAbout)
+        }
         if (allPermissionsGranted()) {
 
         } else {

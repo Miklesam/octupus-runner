@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_menuFragment_to_gameOneFragment"
             app:destination="@id/gameOneFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_fragmentAbout"
+            app:destination="@id/fragmentAbout" />
     </fragment>
     <fragment
         android:id="@+id/gameOneFragment"
@@ -45,4 +48,8 @@
             android:id="@+id/action_fragmentWin_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fragmentAbout"
+        android:name="com.onelinegaming.squidrunner.fragments.FragmentAbout"
+        android:label="FragmentAbout" />
 </navigation>

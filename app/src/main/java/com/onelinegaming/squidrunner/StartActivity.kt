@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.onelinegaming.squidrunner.fragments.FragmentAbout
 
 class StartActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class StartActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-
+        if(navController.currentDestination?.label?:"" == "FragmentAbout")
+        super.onBackPressed()
     }
 }

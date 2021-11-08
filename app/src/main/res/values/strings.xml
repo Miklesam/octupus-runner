@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SquidRunner</string>
+
+    <string name="about_description">Hello, we making mobile games. Join our socials to give your feedback and ask any questions! Thank you.</string>
 </resources>
