@@ -97,7 +97,7 @@
         android:id="@+id/aim_shot"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@drawable/squid_aim"
+        android:src="@drawable/loss_sign"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
