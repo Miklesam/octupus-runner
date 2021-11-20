@@ -14,7 +14,7 @@ class FragmentAbout : Fragment(R.layout.fragment_about) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         discord_bttn.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/twKyPZDn"))
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://linktr.ee/OneLineGaming"))
             startActivity(browserIntent)
         }
     }

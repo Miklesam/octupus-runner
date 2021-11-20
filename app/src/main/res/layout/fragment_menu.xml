@@ -28,18 +28,25 @@
         android:orientation="vertical">
 
         <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/jacket_color"
             android:id="@+id/game_1_bttn"
             android:text="GAME 1" />
 
         <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/jacket_color"
             android:id="@+id/about_bttn"
             android:text="About" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/jacket_color"
+            android:id="@+id/how_to_play"
+            android:text="How To Play" />
 
     </LinearLayout>
 

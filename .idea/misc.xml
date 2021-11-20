@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/layout/fragment_lose.xml" value="0.2453125" />
         <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_won.xml" value="0.3734375" />
+        <entry key="app/src/main/res/layout/onboarding_fragment.xml" value="0.3734375" />
       </map>
     </option>
   </component>

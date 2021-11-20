@@ -2,4 +2,10 @@
     <string name="app_name">SquidRunner</string>
 
     <string name="about_description">Hello, we making mobile games. Join our socials to give your feedback and ask any questions! Thank you.</string>
+
+    <string name="onboarding_first_title">1. Place your phone on a surface and stand looking at the front camera.</string>
+    <string name="onboarding_second_title">2. Step back a couple of steps.</string>
+    <string name="onboarding_third_title">3. Your skeleton should be as shown in the picture.</string>
+    <string name="onboarding_forth_title">4. Run when the song is sung and the green light is on. Freeze when the red is on.</string>
+
 </resources>

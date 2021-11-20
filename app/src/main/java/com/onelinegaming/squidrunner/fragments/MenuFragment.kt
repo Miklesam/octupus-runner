@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.gloves.game.onboarding.FirstStep
 import com.onelinegaming.squidrunner.R
 import com.onelinegaming.squidrunner.StartActivity
 import kotlinx.android.synthetic.main.fragment_menu.*
@@ -21,9 +22,10 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         about_bttn.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_fragmentAbout)
         }
-        if (allPermissionsGranted()) {
-
-        } else {
+        how_to_play.setOnClickListener {
+            FirstStep.open(requireActivity().supportFragmentManager)
+        }
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 StartActivity.REQUIRED_PERMISSIONS,
